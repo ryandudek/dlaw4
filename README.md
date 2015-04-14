@@ -16,10 +16,12 @@ DLAW is a Drupal distribution for building public information websites. DLAW is 
 - At /admin/config/system/quarkfield, set "Content type to generate QR code for" as "page" and set "Image Field to save generated QR code" as "page -- field_qr_url"
 
 ## Recommended blocks for dashboard
+
 ### Dashboard (main)
 - Manage content
 - View: Dashboard: Recently edited
 - View: Dashboard: Unpublished
+
 ### Dashboard (sidebar)
 - DLAW Notification
 - Google Analytics
