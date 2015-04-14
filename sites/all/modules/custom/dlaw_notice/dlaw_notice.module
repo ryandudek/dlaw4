@@ -1,0 +1,62 @@
+<?php
+/**
+ * Implements hook_block_info().
+ *
+ * This hook declares what blocks are provided by the module.
+ */
+function dlaw_notice_block_info() {
+  $blocks['dlaw_notice_block'] = array(
+    'info' => t('DLAW Notification'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * This hook generates the contents of the blocks themselves.
+ */
+function dlaw_notice_block_view($delta = '') {
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'dlaw_notice_block':
+      $block['subject'] = t('DLAW Notification');
+      $block['content'] = dlaw_notice_block_contents($delta);
+      break;
+  }
+  return $block;
+}
+
+
+/**
+ * A module-defined block content function.
+ */
+function dlaw_notice_block_contents($which_block) {
+  switch ($which_block) {
+    case 'dlaw_notice_block':
+
+      $output = '';
+      $output .= '<div class="dashboard_notification">';
+      $output .= '<h2 class="ga_list_title"><i class="fa fa-info-circle"></i> Introducing WriteCleary: Free Plain Language Authoring Tool </h2>';
+      $output .= '<div>Simply drag-and-drop this bookmarklet to your web browser’s bookmarks bar. Then visit a page you want to improve and click the bookmarklet. Analyze reading grade level of a web page and get suggestions for improving readability. Yes, it\'s completely free. Learn more about <a href="http://openadvocate.org/writeclearly/">WriteClearly</a>.</div>';
+      $output .= '<div class="text-center drag-this-text">↓ Drag this button to your web browser\'s bookmarks bar ↓ </div>';
+      $output .= '<div class="text-center"><a href="  javascript: (function () {
+      var wcDomain = \'writeclearly.openadvocate.org\';
+      var jsCode = document.createElement(\'script\');
+      if (window.location.protocol == \'https:\') {
+        jsCode.setAttribute(\'src\', \'https://\' + wcDomain + \'/bookmarklet.js\');
+      }
+      else {
+        jsCode.setAttribute(\'src\', \'http://\' + wcDomain + \'/bookmarklet.js\');
+      }
+      document.body.appendChild(jsCode);
+     }());" id="bmletButton" onclick="return AlertIt();" title="WriteClearly bookmarklet for Bootstrap and Foundation" style="text-transform:none;" class="btn btn-primary btn-lg">WriteClearly</a></div>';
+      $output .= '</div>';
+
+      $result = array(
+        '#markup' => $output
+      );
+
+    return $result;
+  }
+}

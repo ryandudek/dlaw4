@@ -1,0 +1,149 @@
+<?php
+/**
+ * @file
+ * Code for the Search feature.
+ */
+
+// <div class="row">
+//   <div class="panel-panel left col-sm-4">
+//     <h1 class="page-header search-header">Search</h1>
+//   </div>
+//   <div class="panel-panel left col-sm-8">
+//     <ul class="nav nav-tabs nav-justified lead">
+//     <li class="active"><a href="#">Find Info</a></li>
+//     <li class=""><a href="/search-help/%query:html_safe">Find Help</a></li>
+//     </ul>
+//   </div>
+// </div>
+
+// <div class="row">
+//   <div class="panel-panel left col-sm-4">
+//     <h1 class="page-header search-header">Search</h1>
+//   </div>
+//   <div class="panel-panel left col-sm-8">
+//     <ul class="nav nav-tabs nav-justified lead">
+//       <li class=""><a href="/search-site/%query:html_safe">Find Info</a></li>
+//       <li class="active"><a href="#">Find Help</a></li>
+//     </ul>
+//   </div>
+// </div>
+
+include_once 'solr_search_panel.features.inc';
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function solr_search_panel_form_alter(array &$form, array &$form_state = array(), $form_id = NULL) {
+  if ($form_id) {
+    switch ($form_id) {
+      case 'apachesolr_panels_search_block':
+      //   dpm($form['#submit']);
+        $form['#submit'][] = 'solr_search_panel_search_block_form_submit';
+      break;
+
+      case 'apachesolr_panels_search_form':
+            // drupal_add_js(drupal_get_path('module', 'solr_search_panel') . '/solr_search_panel.js');
+            // add ability to retain filters when performing a keyword search
+            // see apachesolr_search.pages.inc
+
+
+            // $form['basic']['get'] = array(
+            //   '#type' => 'hidden',
+            //   '#default_value' => json_encode(array_diff_key($_GET, array('q' => 1, 'page' => 1, 'solrsort' => 1, 'retain-filters' => 0))),
+            // );
+            // $env = apachesolr_default_environment();
+            // if (apachesolr_has_searched($env)) {
+            //   $query = apachesolr_current_query($env);
+            //   // We use the presence of filter query params as a flag for the retain filters checkbox.
+            //   $fq = $query->getParam('fq');
+            // }
+            // if ($fq || isset($form_state['input']['retain-filters'])) {
+            //   $form['basic']['retain-filters'] = array(
+            //     '#type' => 'checkbox',
+            //     '#title' => t('Retain current filters'),
+            //     '#default_value' => (int) !empty($_GET['retain-filters']),
+            //     // '#default_value' => 0,
+            //   );
+            // }
+            // // override default submit
+            // $form['#submit'][] = 'solr_search_panel_search_form_submit';
+
+
+
+      break;
+    }
+
+  }
+}
+
+function solr_search_panel_search_block_form_submit($form, &$form_state) {  
+  $path = "search-site";
+  $redirect = $path . '/' . $form_state['values']['apachesolr_panels_search_form'];
+  // $form_state['redirect'] = array($redirect, array('query' => array("f[0]" => "bundle:page")));
+  $form_state['redirect'] = array($redirect);
+}
+
+// // *
+// //  * Submit override for apachesolr_panels_search_form.
+// //  * See apachesolr_panels_search_block_form_submit() and apachesolr_search_custom_page_search_form_submit().
+ 
+// function solr_search_panel_search_form_submit($form, &$form_state) {
+//   // $path = "search-site";
+//   // $redirect = $path . '/' . $form_state['values']['apachesolr_panels_search_form'];
+//   // $form_state['redirect'] = array($redirect, array('query' => array("f[0]" => "bundle:page")));
+
+//   // Allow core to ensure we have control of the redirect destination.
+//   $form_state['values']['search_block_form'] = $form_state['values']['apachesolr_panels_search_form'];
+//   $form_state['values']['apachesolr_panels_search_block'] = $form_state['values']['apachesolr_panels_search_form'];
+//   search_box_form_submit($form, $form_state);
+//   // set no_redirect to false so that the redirect query options are used
+//   $form_state['no_redirect'] = FALSE;
+//   // Redirect to the specified search page.
+//   // $path = $form_state['args'][0];
+//   $path = "search-site";
+//   $redirect = $path . '/' . $form_state['values']['apachesolr_panels_search_form'];
+//   // retain filters or remove them
+//   $get = array();
+//   if (isset($form_state['values']['get'])) {
+//     $get = json_decode($form_state['values']['get'], TRUE);
+//   }
+//   if (!empty($form_state['values']['retain-filters'])) {
+//     // Add our saved values
+//     $get['retain-filters'] = '1';
+//   }
+//   else {
+//     // Remove all filters
+//     if (!empty($search_page['settings']['apachesolr_search_allow_user_input'])) {
+//       unset($get['fq']);
+//     }
+//     if (module_exists('facetapi')) {
+//       unset($get['f']);
+//     }
+//     $get = array("f[0]" => "bundle:page");
+//   }
+//   // Add the query values into the redirect.
+//   $form_state['redirect'] = array($redirect, array('query' => $get));
+// }
+
+
+/**
+ * Implements hook_menu_alter().
+ */
+function solr_search_panel_menu_alter(&$items) {
+  // Since we are using panelized search page at /search-site,
+  // disable path /search/site.
+  if (isset($items['search/site'])) {
+    $items['search/site']['access callback'] = FALSE;
+    $items['search/site/%']['access callback'] = FALSE;
+  }
+
+  if (isset($items['search/node'])) {
+    $items['search/node']['access callback'] = FALSE;
+    $items['search/node/%']['access callback'] = FALSE;
+  }
+}
+
+function solr_search_panel_has_contact_nodes() {
+  return db_query("SELECT nid FROM node WHERE type = 'contact' AND status = 1 LIMIT 1")->fetchField();
+}
