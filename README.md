@@ -1,4 +1,4 @@
-# DLAW
+# DLAW 4
 DLAW is a Drupal distribution for building public information websites. DLAW is developed and maintained by Urban Insight, Inc.  (http://urbaninsight.com) Development of the DLAW has been supported by Legal Service Corporation (LSC) Technology Initiative Grants. For more information see http://openadvocate.org
 
 ## Installation guide:
